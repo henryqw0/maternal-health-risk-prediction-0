@@ -89,32 +89,30 @@ st.write(f"**Confidence Metrics:** Low Risk: `{p_low*100:.1f}%` | Mid Risk: `{p_
 
 st.write("---")
 
-# ==============================================================================
-# 👁️ 4. GENERATING THE EXPLAINABLE AI AUDIT GRAPH
-# ==============================================================================
-st.subheader("🛡️ Clinical Transparency Audit Trail")
-st.markdown("This chart displays how much each vital sign pushed the model toward an emergency **High Risk** diagnosis.")
 
-# For quick, lightweight app loading, we calculate individual feature weights 
-# from the random forest trees to show custom live contribution metrics
-tree_contributions = []
-for idx, feature in enumerate(feature_names):
-    # Calculate a proxy importance value relative to the user's specific inputs
-    # High blood sugar or blood pressure scales up the positive risk contribution linearly
-    base_val = raw_input_df[feature].values[0]
-    if feature == 'BS' and base_val > 7.0:
-        contrib = (base_val - 7.0) * 0.15
-    elif feature == 'SystolicBP' and base_val > 130:
-        contrib = (base_val - 130) * 0.005
-    elif feature == 'DiastolicBP' and base_val > 80:
-        contrib = (base_val - 80) * 0.005
-    elif feature == 'BodyTemp' and base_val > 99.5:
-        contrib = (base_val - 99.5) * 0.08
-    elif feature == 'HeartRate' and base_val > 90:
-        contrib = (base_val - 90) * 0.002
-    else:
-        contrib = -0.05 if base_val < 100 else 0.01
-    tree_contributions.append(contrib)
+# ==============================================================================
+#  GENERATING THE REAL EXPLAINABLE AI AUDIT GRAPH
+# ==============================================================================
+
+st.subheader("🛡️ Clinical Transparency Audit Trail")
+st.markdown("This chart displays the **exact** mathematical impact each vital sign had on pushing the model toward this diagnosis.")
+
+# 1. Initialize the real SHAP engine on your model
+explainer = shap.TreeExplainer(rf_model)
+
+# 2. Calculate the real SHAP values for this specific slider patient
+# [0] grabs the current patient row, [:, 2] isolates the High Risk category
+shap_values = explainer.shap_values(scaled_input_df)
+
+if isinstance(shap_values, list):
+    # Older SHAP version handler (list of arrays)
+    real_contributions = shap_values[predicted_class][0]
+else:
+    # Newer SHAP version handler (3D array: rows, features, classes)
+    real_contributions = shap_values[0, :, predicted_class]
+
+# Convert array to a standard list for the plotting code below
+tree_contributions = real_contributions.tolist()
 
 # Create the visual plot
 fig, ax = plt.subplots(figsize=(8, 3))
