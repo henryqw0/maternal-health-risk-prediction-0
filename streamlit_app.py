@@ -57,14 +57,6 @@ raw_input_df = pd.DataFrame([{
     'BodyTemp': body_temp,
     'HeartRate': heart_rate
 }])
-pdf_summary_data = {
-    'Patient Age': f"{age} Years",
-    'Systolic BP': f"{systolic_bp} mmHg",
-    'Diastolic BP': f"{diastolic_bp} mmHg",
-    'Blood Sugar (BS)': f"{bs} mmol/L",
-    'Body Temperature': f"{body_temp} °F",
-    'Heart Rate': f"{heart_rate} BPM"
-}
 
 st.write("---")
 
@@ -274,6 +266,14 @@ def generate_pdf(patient_data, probabilities, diagnosis, notes):
     
     # Convert file structure matrix directly into an downloadable byte sequence output
     return pdf.output()
+    pdf_summary_data = {
+    'Patient Age': f"{age} Years",
+    'Systolic BP': f"{systolic_bp} mmHg",
+    'Diastolic BP': f"{diastolic_bp} mmHg",
+    'Blood Sugar (BS)': f"{bs} mmol/L",
+    'Body Temperature': f"{body_temp} °F",
+    'Heart Rate': f"{heart_rate} BPM"
+}
 
 clean_pdf_title = status_title.replace("🟢 ", "").replace("🟡 ", "").replace("🚨 ", "")
 
