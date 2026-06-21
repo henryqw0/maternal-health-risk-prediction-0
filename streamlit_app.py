@@ -300,8 +300,7 @@ pdf_data = generate_pdf(
     notes=doctor_notes
 )
 
-# 5. The Live Streamlit Download Button Trigger
-# Added closing parenthesis and bracket to fix your trailing syntax truncation error
+# 5. FIXED: Fully closed download button syntax parameters
 st.download_button(
     label="📥 Download Official Clinical PDF Report",
     data=bytes(pdf_data),
