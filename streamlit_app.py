@@ -150,40 +150,40 @@ st.pyplot(fig)
 # ==============================================================================
 # GENERATING THE LIVE SHAP WATERFALL ESCALATION GRAPH
 # ==============================================================================
-import shap
-import matplotlib.pyplot as plt
+# import shap
+# import matplotlib.pyplot as plt
 
-st.subheader("🛡️ Clinical Transparency Diagnostic Waterfall")
-st.markdown("This cascade shows exactly how the patient's vitals calculated a step-by-step path from the average baseline to their final diagnostic result.")
+# st.subheader("🛡️ Clinical Transparency Diagnostic Waterfall")
+# st.markdown("This cascade shows exactly how the patient's vitals calculated a step-by-step path from the average baseline to their final diagnostic result.")
 
-# 1. Initialize the tree explainer explicitly enabling native SHAP object format
-explainer = shap.TreeExplainer(rf_model)
+# # 1. Initialize the tree explainer explicitly enabling native SHAP object format
+# explainer = shap.TreeExplainer(rf_model)
 
-# 2. Compute the explanation object for your current slider input
-# (Passing check_additivity=False keeps server responses fast and smooth)
-explanation = explainer(scaled_input_df, check_additivity=False)
+# # 2. Compute the explanation object for your current slider input
+# # (Passing check_additivity=False keeps server responses fast and smooth)
+# explanation = explainer(scaled_input_df, check_additivity=False)
 
-# 3. Construct the explanation wrapper for the winning class index
-# This builds the structural object containing baseline, scores, and raw values
-class_explanation = shap.Explanation(
-    values=explanation.values[0, :, predicted_class],
-    base_values=explanation.base_values[0, predicted_class],
-    data=raw_input_df.iloc[0].values,  # Maps raw unscaled values onto the text labels!
-    feature_names=feature_names
-)
+# # 3. Construct the explanation wrapper for the winning class index
+# # This builds the structural object containing baseline, scores, and raw values
+# class_explanation = shap.Explanation(
+#     values=explanation.values[0, :, predicted_class],
+#     base_values=explanation.base_values[0, predicted_class],
+#     data=raw_input_df.iloc[0].values,  # Maps raw unscaled values onto the text labels!
+#     feature_names=feature_names
+# )
 
-# 4. Generate the visual Matplotlib canvas
-fig, ax = plt.subplots(figsize=(8, 4))
+# # 4. Generate the visual Matplotlib canvas
+# fig, ax = plt.subplots(figsize=(8, 4))
 
-# Pass the custom explanation object directly into SHAP's native waterfall plotter
-shap.plots.waterfall(class_explanation, max_display=5, show=False)
+# # Pass the custom explanation object directly into SHAP's native waterfall plotter
+# shap.plots.waterfall(class_explanation, max_display=5, show=False)
 
-# Clean up styling details for a premium look
-plt.title(f"Diagnostic Contribution Escalation Map ({status_title})", fontsize=11, fontweight='bold', pad=15)
-plt.tight_layout()
+# # Clean up styling details for a premium look
+# plt.title(f"Diagnostic Contribution Escalation Map ({status_title})", fontsize=11, fontweight='bold', pad=15)
+# plt.tight_layout()
 
-# Render the plot frame inside the Streamlit web app layout window cleanly
-st.pyplot(fig)
+# # Render the plot frame inside the Streamlit web app layout window cleanly
+# st.pyplot(fig)
 
 # ==============================================================================
 #  CLINICAL NOTES & PDF REPORT DOWNLOAD ENGINE
