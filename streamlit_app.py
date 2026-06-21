@@ -116,10 +116,19 @@ tree_contributions = real_contributions.tolist()
 
 # Create the visual plot
 fig, ax = plt.subplots(figsize=(8, 3))
-colors = ['#ff4b4b' if x > 0 else '#23c14c' for x in tree_contributions]
 
+# 1. Ensure tree_contributions matches the exact length of your features
+# (Flattens any nested arrays that SHAP sometimes outputs)
+clean_contributions = np.array(tree_contributions).flatten()
+
+# 2. Assign colors: Red for risk escalators (>0), Green for safe pullers (<=0)
+colors = ['#ff4b4b' if x > 0 else '#23c14c' for x in clean_contributions]
+
+# 3. Draw the horizontal bars safely
 y_pos = np.arange(len(feature_names))
-ax.barh(y_pos, tree_contributions, color=colors, edgecolor='none', height=0.6)
+ax.barh(y_pos, clean_contributions, color=colors, edgecolor='none', height=0.6)
+
+# 4. Attach clear y-axis labels
 ax.set_yticks(y_pos)
 ax.set_yticklabels(feature_names, fontsize=10, fontweight='bold')
 ax.invert_yaxis()  # Top-down feature layout
@@ -130,7 +139,8 @@ ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 ax.spines['left'].set_visible(False)
 ax.spines['bottom'].set_visible(False)
-ax.set_xlabel("<- Pulls Toward Safe  |  Escalates High-Risk Alert ->", fontsize=9, color='#31333F')
+ax.set_xlabel("<- Pulls Toward Safe  |  Escalates Risk Alert ->", fontsize=9, color='#31333F')
 
 # Render the plot inside the web window frame cleanly
 st.pyplot(fig)
+
