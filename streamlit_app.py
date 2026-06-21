@@ -268,7 +268,7 @@ def generate_pdf(patient_data, probabilities, diagnosis, notes):
     return pdf.output()
 
 # 3. Create the live Streamlit download action button trigger
-pdf_data = generate_pdf(new_patient_data if 'new_patient_data' in locals() else new_patient_data==new_patient_data, pred_probabilities, status_title, doctor_notes)
+pdf_data = generate_pdf(if 'new_patient_data' in locals() else new_patient_data==new_patient_data, pred_probabilities, status_title, doctor_notes)
 
 st.download_button(
     label="📥 Download Official Clinical PDF Report",
