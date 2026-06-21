@@ -266,20 +266,38 @@ def generate_pdf(patient_data, probabilities, diagnosis, notes):
     
     # Convert file structure matrix directly into an downloadable byte sequence output
     return pdf.output()
-pdf_summary_data = {
-    'Patient Age': f"{age} Years",
-    'Systolic BP': f"{systolic_bp} mmHg",
-    'Diastolic BP': f"{diastolic_bp} mmHg",
-    'Blood Sugar (BS)': f"{bs} mmol/L",
-    'Body Temperature': f"{body_temp} °F",
-    'Heart Rate': f"{heart_rate} BPM"
-}
+
 
 clean_pdf_title = status_title.replace("🟢 ", "").replace("🟡 ", "").replace("🚨 ", "")
 
-# 4. Generate the PDF payload using the clean text title
-pdf_data = generate_pdf(pdf_summary_data, pred_probabilities, clean_pdf_title, doctor_notes)
+# 2. FORCE data types to be pure primitive integers/floats right at extraction
+# This guarantees that raw NumPy shapes or matrix text arrays can never slip into the report!
+pdf_age_val = int(age)
+pdf_sys_val = int(systolic_bp)
+pdf_dia_val = int(diastolic_bp)
+pdf_bs_val = float(bs)
+pdf_temp_val = float(body_temp)
+pdf_hr_val = int(heart_rate)
 
+# 3. Create a clean dictionary from our locked-in primitive values
+pdf_summary_data = {
+    'Patient Age': f"{pdf_age_val} Years",
+    'Systolic BP': f"{pdf_sys_val} mmHg",
+    'Diastolic BP': f"{pdf_dia_val} mmHg",
+    'Blood Sugar (BS)': f"{pdf_bs_val} mmol/L",
+    'Body Temperature': f"{pdf_temp_val} °F",
+    'Heart Rate': f"{pdf_hr_val} BPM"
+}
+
+# 4. Generate the PDF payload using the correct inputs
+pdf_data = generate_pdf(
+    patient_data=pdf_summary_data, 
+    probabilities=pred_probabilities, 
+    diagnosis=clean_pdf_title, 
+    notes=doctor_notes
+)
+
+# 5. The Live Streamlit Download Button Trigger
 st.download_button(
     label="📥 Download Official Clinical PDF Report",
     data=bytes(pdf_data),
