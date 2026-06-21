@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import joblib
 import matplotlib.pyplot as plt
+import shap
 
 # Set page configuration for a professional look
 st.set_page_config(page_title="Clinical Triage AI", page_icon="🏥", layout="centered")
