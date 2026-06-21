@@ -60,7 +60,7 @@ raw_input_df = pd.DataFrame([{
 pdf_summary_data = {
     'Patient Age': f"{age} Years",
     'Systolic BP': f"{systolic_bp} mmHg",
-    'Diastolic BP': f"{diastolic_bp} mmHg", t
+    'Diastolic BP': f"{diastolic_bp} mmHg",
     'Blood Sugar (BS)': f"{bs} mmol/L",
     'Body Temperature': f"{body_temp} °F",
     'Heart Rate': f"{heart_rate} BPM"
