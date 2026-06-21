@@ -232,7 +232,7 @@ def generate_pdf(patient_data, probabilities, diagnosis, notes):
     pdf.set_text_color(0, 0, 0)
     
     for key, val in patient_data.items():
-        pdf.cell(60, 7, f"• {key}:", border=0)
+        pdf.cell(60, 7, f"- {key}:", border=0)
         pdf.cell(0, 7, f"{val[0]}", border=0, ln=True)
     pdf.ln(5)
     
