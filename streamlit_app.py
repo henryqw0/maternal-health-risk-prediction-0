@@ -192,11 +192,7 @@ st.pyplot(fig)
 st.write("---")
 st.subheader("📝 Clinical Consultation Notes")
 
-# 1. Provide a text area for the physician to type their assessment notes
-doctor_notes = st.text_area(
-    "Enter diagnostic notes, prescription steps, or patient tracking details below:",
-    placeholder="e.g., Patient displays elevated blood glucose. Advised nutritional adjustments and scheduled a 2-week follow-up."
-)
+
 
 # 2. Define a function to generate a cleanly formatted PDF document structure in memory
 def generate_pdf(patient_data, probabilities, diagnosis, notes):
@@ -271,7 +267,10 @@ def generate_pdf(patient_data, probabilities, diagnosis, notes):
     
     # Convert file structure matrix directly into an downloadable byte sequence output
     return pdf.output()
-
+doctor_notes = st.text_area(
+    "Enter diagnostic notes, prescription steps, or patient tracking details below:",
+    placeholder="e.g., Patient displays elevated blood glucose. Advised nutritional adjustments and scheduled a 2-week follow-up."
+)
 
 clean_pdf_title = status_title.replace("🟢 ", "").replace("🟡 ", "").replace("🚨 ", "")
 
