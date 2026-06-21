@@ -4,6 +4,8 @@ import numpy as np
 import joblib
 import matplotlib.pyplot as plt
 import shap
+from fpdf import FPDF
+import datetime
 
 # Set page configuration for a professional look
 st.set_page_config(page_title="Clinical Triage AI", page_icon="🏥", layout="centered")
@@ -146,7 +148,7 @@ ax.set_xlabel("<- Pulls Toward Safe  |  Escalates Risk Alert ->", fontsize=9, co
 st.pyplot(fig)
 
 # ==============================================================================
-# 👁️ 4. GENERATING THE LIVE SHAP WATERFALL ESCALATION GRAPH
+# GENERATING THE LIVE SHAP WATERFALL ESCALATION GRAPH
 # ==============================================================================
 import shap
 import matplotlib.pyplot as plt
@@ -182,4 +184,98 @@ plt.tight_layout()
 
 # Render the plot frame inside the Streamlit web app layout window cleanly
 st.pyplot(fig)
+
+# ==============================================================================
+#  CLINICAL NOTES & PDF REPORT DOWNLOAD ENGINE
+# ==============================================================================
+
+st.write("---")
+st.subheader("📝 Clinical Consultation Notes")
+
+# 1. Provide a text area for the physician to type their assessment notes
+doctor_notes = st.text_area(
+    "Enter diagnostic notes, prescription steps, or patient tracking details below:",
+    placeholder="e.g., Patient displays elevated blood glucose. Advised nutritional adjustments and scheduled a 2-week follow-up."
+)
+
+# 2. Define a function to generate a cleanly formatted PDF document structure in memory
+def generate_pdf(patient_data, probabilities, diagnosis, notes):
+    pdf = FPDF()
+    pdf.add_page()
+    
+    # Header: Professional Clinic Layout
+    pdf.set_font("Helvetica", "B", 18)
+    pdf.set_text_color(49, 51, 63) # Charcoal blue
+    pdf.cell(0, 10, "MATERNAL HEALTH RISK PREDICTOR REPORT", ln=True, align="C")
+    
+    pdf.set_font("Helvetica", "I", 10)
+    pdf.set_text_color(100, 100, 100)
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    pdf.cell(0, 8, f"Generated on: {current_date} | System Status: Secure", ln=True, align="C")
+    pdf.ln(5)
+    pdf.line(10, pdf.get_y(), 200, pdf.get_y()) # Horizontal divider line
+    pdf.ln(5)
+    
+    # Section 1: Patient Vital Signs Summary Grid
+    pdf.set_font("Helvetica", "B", 12)
+    pdf.set_text_color(49, 51, 63)
+    pdf.cell(0, 8, "1. Patient Vital Signs Summary", ln=True)
+    pdf.set_font("Helvetica", "", 11)
+    pdf.set_text_color(0, 0, 0)
+    
+    for key, val in patient_data.items():
+        pdf.cell(60, 7, f"• {key}:", border=0)
+        pdf.cell(0, 7, f"{val[0]}", border=0, ln=True)
+    pdf.ln(5)
+    
+    # Section 2: AI Diagnostic Verdict Matrix
+    pdf.set_font("Helvetica", "B", 12)
+    pdf.set_text_color(49, 51, 63)
+    pdf.cell(0, 8, "2. AI Triage Diagnostics Verdict", ln=True)
+    
+    pdf.set_font("Helvetica", "B", 11)
+    pdf.set_text_color(197, 15, 15) if "HIGH" in diagnosis else pdf.set_text_color(15, 117, 43)
+    pdf.cell(0, 8, f"ASSIGNED TIER -> {diagnosis}", ln=True)
+    
+    pdf.set_font("Helvetica", "", 10)
+    pdf.set_text_color(100, 100, 100)
+    p_low, p_mid, p_high = probabilities
+    pdf.cell(0, 6, f"Confidence breakdown: Low: {p_low*100:.1f}% | Mid: {p_mid*100:.1f}% | High: {p_high*100:.1f}%", ln=True)
+    pdf.ln(5)
+    
+    # Section 3: Physician Review Text Box
+    pdf.set_font("Helvetica", "B", 12)
+    pdf.set_text_color(49, 51, 63)
+    pdf.cell(0, 8, "3. Attending Physician Consultation Notes", ln=True)
+    
+    pdf.set_font("Helvetica", "", 11)
+    pdf.set_text_color(0, 0, 0)
+    if notes.strip() == "":
+        notes = "No consultation notes entered by the attending physician."
+    
+    # multi_cell automatically wraps long paragraphs safely so they don't clip off the page edge
+    pdf.multi_cell(0, 6, notes, border=1)
+    pdf.ln(15)
+    
+    # Footer: Signature Validation Lines
+    pdf.line(10, pdf.get_y(), 80, pdf.get_y())
+    pdf.ln(2)
+    pdf.set_font("Helvetica", "I", 9)
+    pdf.set_text_color(120, 120, 120)
+    pdf.cell(0, 5, "Attending Clinician Signature Validation Stamp", ln=True)
+    
+    # Convert file structure matrix directly into an downloadable byte sequence output
+    return pdf.output()
+
+# 3. Create the live Streamlit download action button trigger
+pdf_data = generate_pdf(new_patient_data if 'new_patient_data' in locals() else new_patient_data==new_patient_data, pred_probabilities, status_title, doctor_notes)
+
+st.download_button(
+    label="📥 Download Official Clinical PDF Report",
+    data=bytes(pdf_data),
+    file_name=f"maternal_health_report_{datetime.date.today()}.pdf",
+    mime="application/pdf",
+    use_container_width=True
+)
+
 
