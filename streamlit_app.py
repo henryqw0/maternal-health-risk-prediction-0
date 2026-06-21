@@ -275,7 +275,10 @@ def generate_pdf(patient_data, probabilities, diagnosis, notes):
     # Convert file structure matrix directly into an downloadable byte sequence output
     return pdf.output()
 
-pdf_data = generate_pdf(pdf_summary_data, pred_probabilities, status_title, doctor_notes)
+clean_pdf_title = status_title.replace("🟢 ", "").replace("🟡 ", "").replace("🚨 ", "")
+
+# 4. Generate the PDF payload using the clean text title
+pdf_data = generate_pdf(pdf_summary_data, pred_probabilities, clean_pdf_title, doctor_notes)
 
 st.download_button(
     label="📥 Download Official Clinical PDF Report",
@@ -284,4 +287,3 @@ st.download_button(
     mime="application/pdf",
     use_container_width=True
 )
-
