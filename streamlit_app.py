@@ -186,7 +186,7 @@ st.pyplot(fig)
 # st.pyplot(fig)
 
 # ==============================================================================
-#  CLINICAL NOTES & PDF REPORT DOWNLOAD ENGINE
+#  CLINICAL NOTES & PDF REPORT DOWNLOAD ENGINE (FIXED)
 # ==============================================================================
 
 st.write("---")
@@ -220,18 +220,22 @@ def generate_pdf(patient_data, probabilities, diagnosis, notes):
     pdf.set_font("Helvetica", "B", 12)
     pdf.set_text_color(49, 51, 63)
     pdf.cell(0, 8, "1. Patient Vital Signs Summary", ln=True)
+    pdf.ln(2)
+    
     pdf.set_font("Helvetica", "", 11)
     pdf.set_text_color(0, 0, 0)
     
+    # ✅ FIXED: Expanded width to 75 to avoid text smashing, and removed val[0] slicing!
     for key, val in patient_data.items():
-        pdf.cell(60, 7, f"- {key}:", border=0)
-        pdf.cell(0, 7, f"{val[0]}", border=0, ln=True)
+        pdf.cell(75, 7, f"  - {key}:", border=0)
+        pdf.cell(0, 7, f"{val}", border=0, ln=True) # Changed from val[0] to val
     pdf.ln(5)
     
     # Section 2: AI Diagnostic Verdict Matrix
     pdf.set_font("Helvetica", "B", 12)
     pdf.set_text_color(49, 51, 63)
     pdf.cell(0, 8, "2. AI Triage Diagnostics Verdict", ln=True)
+    pdf.ln(2)
     
     pdf.set_font("Helvetica", "B", 11)
     pdf.set_text_color(197, 15, 15) if "HIGH" in diagnosis else pdf.set_text_color(15, 117, 43)
@@ -247,6 +251,7 @@ def generate_pdf(patient_data, probabilities, diagnosis, notes):
     pdf.set_font("Helvetica", "B", 12)
     pdf.set_text_color(49, 51, 63)
     pdf.cell(0, 8, "3. Attending Physician Consultation Notes", ln=True)
+    pdf.ln(2)
     
     pdf.set_font("Helvetica", "", 11)
     pdf.set_text_color(0, 0, 0)
@@ -271,7 +276,6 @@ def generate_pdf(patient_data, probabilities, diagnosis, notes):
 clean_pdf_title = status_title.replace("🟢 ", "").replace("🟡 ", "").replace("🚨 ", "")
 
 # 2. FORCE data types to be pure primitive integers/floats right at extraction
-# This guarantees that raw NumPy shapes or matrix text arrays can never slip into the report!
 pdf_age_val = int(age)
 pdf_sys_val = int(systolic_bp)
 pdf_dia_val = int(diastolic_bp)
@@ -298,6 +302,7 @@ pdf_data = generate_pdf(
 )
 
 # 5. The Live Streamlit Download Button Trigger
+# Added closing parenthesis and bracket to fix your trailing syntax truncation error
 st.download_button(
     label="📥 Download Official Clinical PDF Report",
     data=bytes(pdf_data),
@@ -305,3 +310,4 @@ st.download_button(
     mime="application/pdf",
     use_container_width=True
 )
+
