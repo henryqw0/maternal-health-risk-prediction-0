@@ -16,7 +16,7 @@ st.set_page_config(page_title="Clinical Triage AI", page_icon="🏥", layout="ce
 @st.cache_resource
 def load_pipeline():
     # Make sure you have exported your pipeline as 'elite_medical_rf_model.pkl' first!
-    return joblib.load('elite_medical_rf_model.pkl')
+    return joblib.load('elite_medical_rf_model.joblib')
 
 try:
     pipeline = load_pipeline()
