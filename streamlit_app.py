@@ -24,7 +24,7 @@ try:
     rf_model = pipeline['random_forest_model']
     feature_names = pipeline['features']
 except FileNotFoundError:
-    st.error("⚠️ Error: 'elite_medical_rf_model.pkl' not found. Please run your training script to export the model file first!")
+    st.error("⚠️ Error: 'elite_medical_rf_model.joblib' not found. Please run your training script to export the model file first!")
     st.stop()
 
 # ==============================================================================
