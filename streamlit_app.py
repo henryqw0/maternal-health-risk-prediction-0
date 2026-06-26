@@ -20,8 +20,8 @@ def load_pipeline():
 
 try:
     pipeline = load_pipeline()
-    scaler = pipeline.named_steps['scaler']
-    rf_model = pipeline.named_steps['classifier']
+    scaler = pipeline['scaler']
+    rf_model = pipeline['classifier']
     feature_names = list(pipeline.feature_names_in_)
 except FileNotFoundError:
     st.error("⚠️ Error:'elite_medical_rf_model.joblib' not found. Please run your training script to export the model file first!")
